@@ -87,6 +87,11 @@ public class AuthController {
                             .orElseThrow(() -> new RuntimeException("ERROR: Role not found."));
                     roles.add(cashierRole);
                     break;
+                case "delivery":
+                    Role deliveryRole = roleRepository.findByName(ERole.ROLE_DELIVERY)
+                            .orElseThrow(() -> new RuntimeException("ERROR: Role not found."));
+                    roles.add(deliveryRole);
+                    break;
             }
         });
 

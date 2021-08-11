@@ -14,37 +14,37 @@ public class AccessController {
     @GetMapping("/users/add")
     @PreAuthorize("hasRole('ADMIN')")
     public String addUsers(){
-        return "Admin adds users here";
+        return "Add users here";
     }
 
-    @GetMapping("/users/search")
+    @GetMapping("/users/reports")
     @PreAuthorize("hasRole('ADMIN')")
-    public String searchUsers(){
-        return "Admin searches users here";
+    public String reportsUsers(){
+        return "Users reports here";
     }
 
-    @GetMapping("/pizza/types/add")
+    @GetMapping("/crusts/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public String addPizzaTypes(){
-        return "Add pizza type here";
+    public String addCrusts(){
+        return "Add crusts here";
     }
 
-    @GetMapping("/pizza/types/search")
+    @GetMapping("/crusts/reports")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public String searchPizzaTypes(){
-        return "Search pizza types here";
+    public String reportsCrusts(){
+        return "Crusts reports here";
     }
 
-    @GetMapping("/pizza/toppings/add")
+    @GetMapping("/toppings/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public String addPizzaToppings(){
-        return "Add pizza toppings here";
+    public String addToppings(){
+        return "Add toppings here";
     }
 
-    @GetMapping("/pizza/toppings/search")
+    @GetMapping("/toppings/reports")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public String searchPizzaToppings(){
-        return "Search pizza toppings here";
+    public String reportsToppings(){
+        return "Toppings reports here";
     }
 
     @GetMapping("/orders/add")
@@ -53,9 +53,21 @@ public class AccessController {
         return "Add orders here";
     }
 
-    @GetMapping("/orders/search")
+    @GetMapping("/orders/reports")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('CASHIER')")
-    public String searchOrders(){
-        return "Search orders here";
+    public String reportsOrders(){
+        return "Orders reports here";
+    }
+
+    @GetMapping("/delivery/add")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('CASHIER')")
+    public String addDelivery(){
+        return "Add delivery here";
+    }
+
+    @GetMapping("/delivery/reports")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('CASHIER')")
+    public String reportsDelivery(){
+        return "Delivery reports here";
     }
 }
