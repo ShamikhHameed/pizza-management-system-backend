@@ -108,24 +108,17 @@ public class OrderController {
     }
 
     @GetMapping("/orders/delivered/false")
-    public ResponseEntity<List<Order>> getAllUndeliveredOrders() {
+    public ResponseEntity<List<Order>> getAllUndeliveredOrders(@RequestParam(required = false) String riderName) {
         try {
             List<Order> orders = new ArrayList<>();
-            List<Order> _orders = new ArrayList<>();
 
-            orderRepository.findAll().forEach(orders::add);
-
-            if (orders.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            if(riderName == null){
+                orderRepository.findAllByDeliveredIsFalse().forEach(orders::add);
+            }else {
+                orderRepository.findAllByDeliveryRiderContainingAndDeliveredIsFalse(riderName).forEach(orders::add);
             }
 
-            for(Order order : orders) {
-                if(!order.isDelivered()) {
-                    _orders.add(order);
-                }
-            }
-
-            return new ResponseEntity<>(_orders, HttpStatus.OK);
+            return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,6 +132,36 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/orders/delivered/{id}")
+    public ResponseEntity<Order> updateOrderDeliveredStatus(@PathVariable("id") String id) {
+        Optional<Order> orderData = orderRepository.findById(id);
+
+        if(orderData.isPresent()) {
+            Order _order = orderData.get();
+            _order.setDelivered(true);
+
+            return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/orders/delivery/assigned/false/{id}")
+    public ResponseEntity<Order> updateOrderSetDeliveryAssignedStatusFalse(@PathVariable("id") String id) {
+        Optional<Order> orderData = orderRepository.findById(id);
+
+        if(orderData.isPresent()) {
+            Order _order = orderData.get();
+            _order.setDeliveryAssigned(false);
+            _order.setDeliveryRider("");
+            _order.setDelivered(false);
+
+            return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
