@@ -26,4 +26,5 @@ Hameed M.S.        |  IT19064932  |  ShamikhHameed    |  Shamikh
 
 
 ## Technologies ##
-Java
+Java - Spring Boot
+MongoDB
