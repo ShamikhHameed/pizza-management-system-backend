@@ -6,7 +6,7 @@ Heaven on a Dough - Pizza Management System
 
 ## Group Details ##
 
-        Name       |  Student ID  |      Username     | Branch Name
+Name       |  Student ID  |      Username     | Branch Name
 :---: | :---: | :---: | :---:
 Jayaweera N.C.S.   |  IT19014296  |  nethmi-1997      |  Nethmi
 Pitawala W.W.S.P.  |  IT19032252  |  Sandinipitawala  |  sandini
