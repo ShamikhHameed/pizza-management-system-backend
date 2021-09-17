@@ -9,13 +9,14 @@ public class OrderRequest {
     private List<OrderItemRequest> items;
 //    private boolean deliveryAssigned;
     private String deliveryRider;
+    private String cashier;
 
-    public OrderRequest(String customerName, String address, List<OrderItemRequest> items, String deliveryRider) {
+    public OrderRequest(String customerName, String address, List<OrderItemRequest> items, String deliveryRider, String cashier) {
         this.customerName = customerName;
         this.address = address;
         this.items = items;
-//        this.deliveryAssigned = deliveryAssigned;
         this.deliveryRider = deliveryRider;
+        this.cashier = cashier;
     }
 
     public String getCustomerName() {
@@ -48,5 +49,13 @@ public class OrderRequest {
 
     public void setDeliveryRider(String deliveryRider) {
         this.deliveryRider = deliveryRider;
+    }
+
+    public String getCashier() {
+        return cashier;
+    }
+
+    public void setCashier(String cashier) {
+        this.cashier = cashier;
     }
 }

@@ -4,11 +4,13 @@ import com.nsss.pizzamanagementsystembackend.model.Crust;
 import com.nsss.pizzamanagementsystembackend.model.Order;
 import com.nsss.pizzamanagementsystembackend.model.OrderItem;
 import com.nsss.pizzamanagementsystembackend.model.Topping;
+import com.nsss.pizzamanagementsystembackend.reponse.CrustStatistics;
 import com.nsss.pizzamanagementsystembackend.reponse.MessageResponse;
 import com.nsss.pizzamanagementsystembackend.repository.CrustRepository;
 import com.nsss.pizzamanagementsystembackend.repository.OrderRepository;
 import com.nsss.pizzamanagementsystembackend.repository.ToppingRepository;
 import com.nsss.pizzamanagementsystembackend.request.CrustRequest;
+import com.nsss.pizzamanagementsystembackend.request.CrustStatisticsRequest;
 import com.nsss.pizzamanagementsystembackend.request.OrderItemRequest;
 import com.nsss.pizzamanagementsystembackend.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +45,9 @@ public class OrderController {
         Order order = new Order(
                 orderRequest.getCustomerName(),
                 orderRequest.getAddress(),
-                orderRequest.getDeliveryRider()
+                orderRequest.getDeliveryRider(),
+                orderRequest.getCashier(),
+                new Date()
         );
 
         if(orderRequest.getDeliveryRider().trim().isEmpty()) {
@@ -107,6 +112,26 @@ public class OrderController {
         return ResponseEntity.ok(new MessageResponse("Order added successfully"));
     }
 
+    @GetMapping("/orders")
+    public ResponseEntity<List<Order>> getAllOrders(@RequestParam(required = false) String customerName) {
+        try {
+            List<Order> orders = new ArrayList<>();
+
+            if (customerName == null)
+                orderRepository.findAll().forEach(orders::add);
+            else
+                orderRepository.findAllByCustomerName(customerName).forEach(orders::add);
+
+            if (orders.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/orders/delivered/false")
     public ResponseEntity<List<Order>> getAllUndeliveredOrders(@RequestParam(required = false) String riderName) {
         try {
@@ -116,6 +141,24 @@ public class OrderController {
                 orderRepository.findAllByDeliveredIsFalse().forEach(orders::add);
             }else {
                 orderRepository.findAllByDeliveryRiderContainingAndDeliveredIsFalse(riderName).forEach(orders::add);
+            }
+
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/orders/delivered")
+    public ResponseEntity<List<Order>> getAllDeliveredOrders(@RequestParam(required = false) String riderName) {
+        try {
+            List<Order> orders = new ArrayList<>();
+
+            if(riderName == null){
+                orderRepository.findAllByDeliveredIsTrue().forEach(orders::add);
+            }else {
+                orderRepository.findAllByDeliveryRiderContainingAndDeliveredIsTrue(riderName).forEach(orders::add);
             }
 
             return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -142,6 +185,7 @@ public class OrderController {
         if(orderData.isPresent()) {
             Order _order = orderData.get();
             _order.setDelivered(true);
+            _order.setDeliveryTimestamp(new Date());
 
             return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
         } else {

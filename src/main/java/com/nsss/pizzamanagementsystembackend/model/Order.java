@@ -3,7 +3,9 @@ package com.nsss.pizzamanagementsystembackend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "orders")
@@ -18,10 +20,31 @@ public class Order {
     private String deliveryRider;
     private boolean delivered;
 
+    private String cashier;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date orderTimestamp;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date deliveryTimestamp;
+
     public Order(String customerName, String address, String deliveryRider) {
         this.customerName = customerName;
         this.address = address;
         this.deliveryRider = deliveryRider;
+    }
+
+    public Order(String customerName, String address, String deliveryRider, Date orderTimestamp) {
+        this.customerName = customerName;
+        this.address = address;
+        this.deliveryRider = deliveryRider;
+        this.orderTimestamp = orderTimestamp;
+    }
+
+    public Order(String customerName, String address, String deliveryRider, String cashier, Date orderTimestamp) {
+        this.customerName = customerName;
+        this.address = address;
+        this.deliveryRider = deliveryRider;
+        this.cashier = cashier;
+        this.orderTimestamp = orderTimestamp;
     }
 
     public Order(String customerName, String address, boolean deliveryAssigned, String deliveryRider) {
@@ -41,6 +64,20 @@ public class Order {
         this.deliveryAssigned = deliveryAssigned;
         this.deliveryRider = deliveryRider;
         this.delivered = delivered;
+    }
+
+    public Order(String id, String customerName, String address, List<OrderItem> items, double amount, boolean deliveryAssigned, String deliveryRider, boolean delivered, String cashier, Date orderTimestamp, Date deliveryTimestamp) {
+        this.id = id;
+        this.customerName = customerName;
+        this.address = address;
+        this.items = items;
+        this.amount = amount;
+        this.deliveryAssigned = deliveryAssigned;
+        this.deliveryRider = deliveryRider;
+        this.delivered = delivered;
+        this.cashier = cashier;
+        this.orderTimestamp = orderTimestamp;
+        this.deliveryTimestamp = deliveryTimestamp;
     }
 
     public String getId() {
@@ -105,5 +142,29 @@ public class Order {
 
     public void setDelivered(boolean delivered) {
         this.delivered = delivered;
+    }
+
+    public Date getOrderTimestamp() {
+        return orderTimestamp;
+    }
+
+    public void setOrderTimestamp(Date orderTimestamp) {
+        this.orderTimestamp = orderTimestamp;
+    }
+
+    public Date getDeliveryTimestamp() {
+        return deliveryTimestamp;
+    }
+
+    public void setDeliveryTimestamp(Date deliveryTimestamp) {
+        this.deliveryTimestamp = deliveryTimestamp;
+    }
+
+    public String getCashier() {
+        return cashier;
+    }
+
+    public void setCashier(String cashier) {
+        this.cashier = cashier;
     }
 }
