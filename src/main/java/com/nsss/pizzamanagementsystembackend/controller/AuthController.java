@@ -9,9 +9,12 @@ import com.nsss.pizzamanagementsystembackend.reponse.MessageResponse;
 import com.nsss.pizzamanagementsystembackend.repository.RoleRepository;
 import com.nsss.pizzamanagementsystembackend.repository.UserRepository;
 import com.nsss.pizzamanagementsystembackend.request.LoginRequest;
+import com.nsss.pizzamanagementsystembackend.request.PasswordChangeRequest;
 import com.nsss.pizzamanagementsystembackend.request.SignupRequest;
+import com.nsss.pizzamanagementsystembackend.request.UpdateUserDetailsRequest;
 import com.nsss.pizzamanagementsystembackend.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,9 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -62,7 +63,9 @@ public class AuthController {
         User user = new User(
                 signupRequest.getUsername(),
                 signupRequest.getEmail(),
-                encoder.encode(signupRequest.getPassword())
+                encoder.encode(signupRequest.getPassword()),
+                signupRequest.getCreatedBy(),
+                new Date()
         );
 
         Set<String> strRoles = signupRequest.getRoles();
@@ -121,8 +124,34 @@ public class AuthController {
         ));
     }
 
-/*    @PostMapping("/password/change")
-    public ResponseEntity<?> changePassword(@Value @RequestBody PasswordChangeRequest passwordChangeRequest){
+    @PutMapping("/password/change")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(passwordChangeRequest.getUsername(), passwordChangeRequest.getCurrentPassword()));
 
-    }*/
+        if(authentication.isAuthenticated()){
+            User user = userRepository.findByUsername(passwordChangeRequest.getUsername()).get();
+            user.setPassword(encoder.encode(passwordChangeRequest.getNewPassword()));
+            return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUserDetails(@PathVariable("id") String id, @Valid @RequestBody UpdateUserDetailsRequest updateUserDetailsRequest){
+        Optional<User> userData = userRepository.findById(id);
+
+        if(userData.isPresent()) {
+            User _user = userData.get();
+            _user.setFirstName(updateUserDetailsRequest.getFirstName());
+            _user.setLastName(updateUserDetailsRequest.getLastName());
+            _user.setAddress(updateUserDetailsRequest.getAddress());
+            _user.setPhone(updateUserDetailsRequest.getPhone());
+
+            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
