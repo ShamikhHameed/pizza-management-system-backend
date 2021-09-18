@@ -208,4 +208,19 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping("/orders/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable("id") String id, @Valid @RequestBody UpdateOrderRequest updateOrderRequest) {
+        Optional<Order> orderData = orderRepository.findById(id);
+
+        if(orderData.isPresent()) {
+            Order _order = orderData.get();
+            _order.setCustomerName(updateOrderRequest.getCustomerName());
+            _order.setAddress(updateOrderRequest.getAddress());
+
+            return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
