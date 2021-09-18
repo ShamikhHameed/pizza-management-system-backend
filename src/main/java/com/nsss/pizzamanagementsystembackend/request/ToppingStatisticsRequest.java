@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
+//TOPPING STATISTICS REQUEST IS ADDED
 public class ToppingStatisticsRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date fromTimestamp;
