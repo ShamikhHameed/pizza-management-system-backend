@@ -9,10 +9,7 @@ import com.nsss.pizzamanagementsystembackend.reponse.MessageResponse;
 import com.nsss.pizzamanagementsystembackend.repository.CrustRepository;
 import com.nsss.pizzamanagementsystembackend.repository.OrderRepository;
 import com.nsss.pizzamanagementsystembackend.repository.ToppingRepository;
-import com.nsss.pizzamanagementsystembackend.request.CrustRequest;
-import com.nsss.pizzamanagementsystembackend.request.CrustStatisticsRequest;
-import com.nsss.pizzamanagementsystembackend.request.OrderItemRequest;
-import com.nsss.pizzamanagementsystembackend.request.OrderRequest;
+import com.nsss.pizzamanagementsystembackend.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -202,6 +199,21 @@ public class OrderController {
             _order.setDeliveryAssigned(false);
             _order.setDeliveryRider("");
             _order.setDelivered(false);
+
+            return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/orders/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable("id") String id, @Valid @RequestBody UpdateOrderRequest updateOrderRequest) {
+        Optional<Order> orderData = orderRepository.findById(id);
+
+        if(orderData.isPresent()) {
+            Order _order = orderData.get();
+            _order.setCustomerName(updateOrderRequest.getCustomerName());
+            _order.setAddress(updateOrderRequest.getAddress());
 
             return new ResponseEntity<>(orderRepository.save(_order), HttpStatus.OK);
         } else {
