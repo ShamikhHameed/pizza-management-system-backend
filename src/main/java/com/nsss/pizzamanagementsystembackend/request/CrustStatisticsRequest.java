@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
+//Crust Statistics Request
 public class CrustStatisticsRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date fromTimestamp;
